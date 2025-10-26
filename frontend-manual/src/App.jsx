@@ -1,0 +1,27 @@
+import { useEffect, useState } from "react";
+
+function App() {
+  const [recipes, setRecipes] = useState([]);
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/recipes`)
+      .then(r => r.json())
+      .then(setRecipes)
+      .catch(err => console.error("API error:", err));
+  }, [API_BASE_URL]);
+
+  return (
+    <div style={{ maxWidth: 720, margin: "2rem auto", fontFamily: "system-ui, sans-serif" }}>
+      <h1>Recipe Sharing App</h1>
+      <p><strong>API:</strong> {API_BASE_URL}</p>
+      <ul>
+        {recipes.map(r => (
+          <li key={r.id}>{r.title} — {r.minutes} min</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
