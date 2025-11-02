@@ -1,9 +1,16 @@
 {
+  "name": "recipe-backend",
+  "version": "1.0.0",
+  "main": "server.js",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start": "vite preview --host 0.0.0.0 --port ${PORT:-8080}",
-    "test": "vitest run"
+    "start": "node server.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
