@@ -1,3 +1,6 @@
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, '0.0.0.0', () => console.log(`Listening on ${PORT}`));
+
 {
   "name": "recipe-backend",
   "version": "1.0.0",

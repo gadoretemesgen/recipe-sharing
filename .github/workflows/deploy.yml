@@ -7,7 +7,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,10 +33,9 @@ jobs:
 
       - name: Test frontend
         working-directory: frontend
-        # keep || true if frontend tests aren't ready yet
         run: npm test -- --watchAll=false || true
 
-      # ===== GCP Auth & gcloud =====
+      # ===== GCP auth & gcloud =====
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
@@ -48,9 +46,9 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      # ===== Deploy BACKEND =====
-      - id: deploy-backend
-        name: Deploy backend to Cloud Run
+      # ===== Deploy Backend =====
+      - name: Deploy backend to Cloud Run
+        id: deploy-backend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: recipe-sharing-backend
@@ -59,9 +57,9 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           flags: '--allow-unauthenticated'
 
-      # ===== Deploy FRONTEND =====
-      - id: deploy-frontend
-        name: Deploy frontend to Cloud Run
+      # ===== Deploy Frontend =====
+      - name: Deploy frontend to Cloud Run
+        id: deploy-frontend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: recipe-sharing-frontend
@@ -70,6 +68,7 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           flags: '--allow-unauthenticated'
 
+      # ===== Print URLs for screenshots =====
       - name: Show service URLs (screenshot this)
         run: |
           echo "Backend URL:  ${{ steps.deploy-backend.outputs.url }}"
