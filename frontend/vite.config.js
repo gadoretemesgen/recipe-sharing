@@ -1,13 +1,14 @@
-// frontend/vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  test: {
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.js',
-    globals: true,
-    include: ['src/test/**/*.test.{js,jsx,ts,tsx}']
+  server: {
+    host: true,                      // 0.0.0.0
+    port: Number(process.env.PORT) || 8080
+  },
+  preview: {
+    host: true,                      // 0.0.0.0
+    port: Number(process.env.PORT) || 8080
   }
 })
