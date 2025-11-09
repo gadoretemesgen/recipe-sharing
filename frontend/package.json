@@ -3,14 +3,6 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "vitest": "^1.6.0",
-    "@testing-library/react": "^14.1.2",
-    "@testing-library/jest-dom": "^6.4.2",
-    "jsdom": "^24.0.0",
-    "@vitejs/plugin-react": "^4.3.0"
-  },
-  "vitest": {
-    "environment": "jsdom",
-    "setupFiles": "src/test/setup.js"
+    "vitest": "^1.6.0"
   }
 }
