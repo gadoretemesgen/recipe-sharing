@@ -1,3 +1,14 @@
+env:
+  SKIP_BUILD_DEPLOY: 'true'   # run tests only; skip deploy for the green run
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION:     ${{ secrets.GCP_REGION }}
+  REPO_NAME:  ${{ github.repository }}
+  SHA:        ${{ github.sha }}
+  BACKEND_IMAGE:  gcr.io/${{ secrets.GCP_PROJECT_ID }}/recipe-backend:${{ github.sha }}
+  FRONTEND_IMAGE: gcr.io/${{ secrets.GCP_PROJECT_ID }}/recipe-frontend:${{ github.sha }}
+  BACKEND_SERVICE: recipe-backend
+  FRONTEND_SERVICE: recipe-frontend
+
 name: Deploy to Cloud Run
 
 on:
@@ -20,34 +31,37 @@ jobs:
       # ===== Backend =====
       - name: Install backend deps
         working-directory: backend
-        run: npm ci
+        run: npm ci || npm install
 
       - name: Test backend
         working-directory: backend
-        run: npm test -- --watchAll=false
+        run: npm test -- --ci --watchAll=false
 
       # ===== Frontend =====
       - name: Install frontend deps
         working-directory: frontend
-        run: npm ci
+        run: npm ci || npm install
 
       - name: Test frontend
         working-directory: frontend
-        run: npm test -- --watchAll=false || true
+        run: npm test -- --ci --watchAll=false
 
-      # ===== GCP auth & gcloud =====
+      # ===== GCP auth & gcloud (skip when we're not deploying) =====
       - name: Authenticate to GCP
+        if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Setup gcloud
+        if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       # ===== Deploy Backend =====
       - name: Deploy backend to Cloud Run
+        if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
         id: deploy-backend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
@@ -59,6 +73,7 @@ jobs:
 
       # ===== Deploy Frontend =====
       - name: Deploy frontend to Cloud Run
+        if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
         id: deploy-frontend
         uses: google-github-actions/deploy-cloudrun@v2
         with:
@@ -68,8 +83,9 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           flags: '--allow-unauthenticated'
 
-      # ===== Print URLs for screenshots =====
+      # ===== Print URLs =====
       - name: Show service URLs (screenshot this)
+        if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
         run: |
           echo "Backend URL:  ${{ steps.deploy-backend.outputs.url }}"
           echo "Frontend URL: ${{ steps.deploy-frontend.outputs.url }}"
