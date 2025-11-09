@@ -57,8 +57,7 @@ jobs:
         if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
+          project_id: ${{ secrets.GCP_PROJECT_
       # ===== Deploy Backend =====
       - name: Deploy backend to Cloud Run
         if: ${{ env.SKIP_BUILD_DEPLOY != 'true' }}
