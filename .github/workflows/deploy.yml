@@ -44,7 +44,7 @@ jobs:
 
       - name: Test frontend
         working-directory: frontend
-        run: npm test -- --ci --watchAll=false
+        run: npm test  # <-- ✅ fixed: removed Jest flags that break Vitest
 
       # ===== GCP auth & gcloud (skip when we're not deploying) =====
       - name: Authenticate to GCP
